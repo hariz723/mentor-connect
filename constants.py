@@ -1,0 +1,27 @@
+'''
+@author: Hari
+
+source:
+    ?
+'''
+
+
+from dotenv import load_dotenv
+import os
+
+
+load_dotenv()
+
+ACCESS_TOKEN_EXPIRE_MINUTES : int = 30
+SECRET_KEY : str = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
+ALGORITHM : str = "HS256"
+
+
+USERNAME : str = "hari"
+PASSWORD : str = 'test'
+
+
+MONGO_URI = os.getenv("MONGO_URI")
+print('MONGO_URI: ', MONGO_URI)
+
+
