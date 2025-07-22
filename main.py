@@ -5,6 +5,7 @@ source:
     ?
 '''
 from fastapi import FastAPI, Request
+from fastapi.responses import RedirectResponse
 
 #local imports
 from schemas import UserSchema
@@ -32,16 +33,20 @@ async def login_post(
     
 
     if username == con.USERNAME and password == con.PASSWORD:
-        return {
-            "message" : "success",
-            "token" : auth.create_access_token({"sub": username})
-        }
-
+        token = auth.create_access_token(user)
+        response = RedirectResponse(url='/login', status_code=302)
+        response.set_cookie(key = "access_token", value = token)
+        return response
+    return {
+        "status_code": 401,
+        "message"    : "Invalid credentials"
+    }
 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(
         'main:app',
         host="0.0.0.0",
+        reload=True,
         port=8000
     )
