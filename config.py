@@ -25,7 +25,7 @@ def get_env(key: str, cast: type[T], default) -> bool | T  :
 class ConfigLoader: 
     
     
-    database_url = get_env("DATABASE_URL", cast=str, default="sqlite:///data.db")
+    DATABASE_URL = get_env("DATABASE_URL", cast=str, default="sqlite:///data.db")
     
     
     
