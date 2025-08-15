@@ -31,8 +31,8 @@ def create_access_token(data: dict):
     using a secret key and a specified algorithm.
     """
 
-    expire = datetime.utcnow() + timedelta(minutes=const.ACCESS_TOKEN_EXPIRE_MINUTES)
-    payload = {"sub": data.dict(), "exp": expire}
+    expire: datetime = datetime.now() + timedelta(minutes=const.ACCESS_TOKEN_EXPIRE_MINUTES)
+    payload: dict[str, datetime] = {"sub": data.dict(), "exp": expire} # type: ignore
     return jwt.encode(payload, const.SECRET_KEY, algorithm=const.ALGORITHM)
 
 

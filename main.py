@@ -8,11 +8,18 @@ from fastapi import FastAPI, Request
 from fastapi.responses import RedirectResponse
 
 #local imports
-from schemas import UserSchema
 import constants as con
-import auth
+import token
+from src.schemas import (
+    UserSchema,
+    SuccessResponse,
+    ErrorResponse
+)
+from logger import log_requests, logger
 
 app = FastAPI()
+
+app.middleware("http")(log_requests)
 
 @app.get("/")
 async def root():
@@ -28,22 +35,35 @@ async def login_post(
     request : Request,
     user : UserSchema
 ):
-    username = user.username
-    password = user.password
     
+    try: 
+        username = user.username
+        password = user.password
+        
 
-    if username == con.USERNAME and password == con.PASSWORD:
-        token = auth.create_access_token(user)
-        response = RedirectResponse(url='/login', status_code=302)
-        response.set_cookie(key = "access_token", value = token)
-        return response
-    return {
-        "status_code": 401,
-        "message"    : "Invalid credentials"
-    }
+        if username == con.USERNAME and password == con.PASSWORD:
+            token = token.create_access_token(user.dict())
+            response = RedirectResponse(url='/login', status_code=302)
+            response.set_cookie(key = "access_token", value = token)
+            return SuccessResponse(
+                message = "Login Successful",
+                status_code = 200,
+                data = {response}
+            )
+            
+    except Exception as e:
+        return ErrorResponse(
+            message = "Invalid Credentials",
+            status_code = 401,
+            error_message = {"Error": str(e)}
+        )
+
+
+
+
 
 if __name__ == "__main__":
-    import uvicorn
+    import uvicorn # type: ignore
     uvicorn.run(
         'main:app',
         host="0.0.0.0",
